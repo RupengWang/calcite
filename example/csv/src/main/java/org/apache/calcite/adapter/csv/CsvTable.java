@@ -30,34 +30,41 @@ import java.util.List;
  * Base class for table that reads CSV files.
  */
 public abstract class CsvTable extends AbstractTable {
-  protected final Source source;
-  protected final RelProtoDataType protoRowType;
-  protected List<CsvFieldType> fieldTypes;
+    protected final Source source;
+    protected final RelProtoDataType protoRowType;
+    protected List<CsvFieldType> fieldTypes;
 
-  /** Creates a CsvTable. */
-  CsvTable(Source source, RelProtoDataType protoRowType) {
-    this.source = source;
-    this.protoRowType = protoRowType;
-  }
-
-  public RelDataType getRowType(RelDataTypeFactory typeFactory) {
-    if (protoRowType != null) {
-      return protoRowType.apply(typeFactory);
+    /**
+     * Creates a CsvTable.
+     */
+    CsvTable(Source source, RelProtoDataType protoRowType) {
+        this.source = source;
+        this.protoRowType = protoRowType;
     }
-    if (fieldTypes == null) {
-      fieldTypes = new ArrayList<>();
-      return CsvEnumerator.deduceRowType((JavaTypeFactory) typeFactory, source,
-          fieldTypes);
-    } else {
-      return CsvEnumerator.deduceRowType((JavaTypeFactory) typeFactory, source,
-          null);
-    }
-  }
 
-  /** Various degrees of table "intelligence". */
-  public enum Flavor {
-    SCANNABLE, FILTERABLE, TRANSLATABLE
-  }
+    /**
+     * 返回每列的类型和名称
+     */
+    public RelDataType getRowType(RelDataTypeFactory typeFactory) {
+        if (protoRowType != null) {
+            return protoRowType.apply(typeFactory);
+        }
+        if (fieldTypes == null) {
+            fieldTypes = new ArrayList<>();
+            return CsvEnumerator.deduceRowType((JavaTypeFactory) typeFactory, source,
+                    fieldTypes);
+        } else {
+            return CsvEnumerator.deduceRowType((JavaTypeFactory) typeFactory, source,
+                    null);
+        }
+    }
+
+    /**
+     * Various degrees of table "intelligence".
+     */
+    public enum Flavor {
+        SCANNABLE, FILTERABLE, TRANSLATABLE
+    }
 }
 
 // End CsvTable.java

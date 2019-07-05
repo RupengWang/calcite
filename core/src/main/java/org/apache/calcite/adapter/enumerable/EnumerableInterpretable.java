@@ -111,7 +111,7 @@ public class EnumerableInterpretable extends ConverterImpl
 
     final ClassDeclaration expr = relImplementor.implementRoot(rel, prefer);
     String s = Expressions.toString(expr.memberDeclarations, "\n", false);
-
+    System.out.println("生成代码[Code Gen]:\n" + s);
     if (CalciteSystemProperty.DEBUG.value()) {
       Util.debugCode(System.out, s);
     }

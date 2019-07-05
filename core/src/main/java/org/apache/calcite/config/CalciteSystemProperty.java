@@ -52,6 +52,8 @@ public final class CalciteSystemProperty<T> {
    * STDOUT. It is most commonly used to print and identify problems in generated java code. Debug
    * mode is also used to perform more verifications at runtime, which are not performed during
    * normal execution.</p>
+   *
+   * Note: Xiaoxiang Yu modify default value
    */
   public static final CalciteSystemProperty<Boolean> DEBUG =
       booleanProperty("calcite.debug", false);

@@ -554,6 +554,7 @@ public class SqlToRelConverter {
       SqlNode query,
       final boolean needsValidation,
       final boolean top) {
+    SQL2REL_LOGGER.info("准备校验 SqlNode");
     if (needsValidation) {
       query = validator.validate(query);
     }
@@ -576,7 +577,7 @@ public class SqlToRelConverter {
 
     if (SQL2REL_LOGGER.isDebugEnabled()) {
       SQL2REL_LOGGER.debug(
-          RelOptUtil.dumpPlan("Plan after converting SqlNode to RelNode",
+          RelOptUtil.dumpPlan("Plan after converting SqlNode to RelNode[转化为关系表达式]",
               result, SqlExplainFormat.TEXT,
               SqlExplainLevel.EXPPLAN_ATTRIBUTES));
     }

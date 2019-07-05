@@ -21,7 +21,7 @@ schemas:
   tables:
   - name: DEPTS
     type: custom
-    factory: org.apache.calcite.adapter.csv.CsvStreamTableFactory
+    factory: org.apache.calcite.adapter.csv.stream.CsvStreamTableFactory
     stream:
       stream: true
     operand:

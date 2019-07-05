@@ -1,0 +1,10 @@
+BRANCH_NAME:string,BRANCH_CITY:string,ASSETS:double
+Shanghai_ZhangJiang,Shanghai,100000
+Shanghai_LuJiaZui,Shanghai,100000
+Shanghai_HuaMu,Shanghai,100000
+Shanghai_XuHui,Shanghai,100000
+Shanghai_JingAn,Shanghai,100000
+Hangzhou_YuHang,Hangzhou,100000
+Hangzhou_BingJiang,Hangzhou,100000
+Nanjing_QingHuai,Nanjing,100000
+Nanjing_YuHuaTai,Nanjing,100000

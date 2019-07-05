@@ -34,22 +34,21 @@ import java.util.Map;
  * <p>Allows a CSV table to be included in a model.json file, even in a
  * schema that is not based upon {@link CsvSchema}.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class CsvTableFactory implements TableFactory<CsvTable> {
-  // public constructor, per factory contract
-  public CsvTableFactory() {
-  }
+    // public constructor, per factory contract
+    public CsvTableFactory() {
+    }
 
-  public CsvTable create(SchemaPlus schema, String name,
-      Map<String, Object> operand, RelDataType rowType) {
-    String fileName = (String) operand.get("file");
-    final File base =
-        (File) operand.get(ModelHandler.ExtraOperand.BASE_DIRECTORY.camelName);
-    final Source source = Sources.file(base, fileName);
-    final RelProtoDataType protoRowType =
-        rowType != null ? RelDataTypeImpl.proto(rowType) : null;
-    return new CsvScannableTable(source, protoRowType);
-  }
+    public CsvTable create(SchemaPlus schema, String name,
+                           Map<String, Object> operand, RelDataType rowType) {
+        String fileName = (String) operand.get("file");
+        final File base =
+                (File) operand.get(ModelHandler.ExtraOperand.BASE_DIRECTORY.camelName);
+        final Source source = Sources.file(base, fileName);
+        final RelProtoDataType protoRowType =
+                rowType != null ? RelDataTypeImpl.proto(rowType) : null;
+        return new CsvScannableTable(source, protoRowType);
+    }
 }
 
 // End CsvTableFactory.java

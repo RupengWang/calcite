@@ -18,13 +18,18 @@ package org.apache.calcite.adapter.csv;
 
 import org.apache.calcite.plan.RelOptRule;
 import org.apache.calcite.plan.RelOptRuleCall;
+import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.core.RelFactories;
 import org.apache.calcite.rel.logical.LogicalProject;
 import org.apache.calcite.rex.RexInputRef;
 import org.apache.calcite.rex.RexNode;
 import org.apache.calcite.tools.RelBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Planner rule that projects from a {@link CsvTableScan} scan just the columns
@@ -32,50 +37,54 @@ import java.util.List;
  * the projection is removed.
  */
 public class CsvProjectTableScanRule extends RelOptRule {
-  public static final CsvProjectTableScanRule INSTANCE =
-      new CsvProjectTableScanRule(RelFactories.LOGICAL_BUILDER);
 
-  /**
-   * Creates a CsvProjectTableScanRule.
-   *
-   * @param relBuilderFactory Builder for relational expressions
-   */
-  public CsvProjectTableScanRule(RelBuilderFactory relBuilderFactory) {
-    super(
-        operand(LogicalProject.class,
-            operand(CsvTableScan.class, none())),
-        relBuilderFactory,
-        "CsvProjectTableScanRule");
-  }
+    private static final Logger logger = LoggerFactory.getLogger(CsvProjectTableScanRule.class);
 
-  @Override public void onMatch(RelOptRuleCall call) {
-    final LogicalProject project = call.rel(0);
-    final CsvTableScan scan = call.rel(1);
-    int[] fields = getProjectFields(project.getProjects());
-    if (fields == null) {
-      // Project contains expressions more complex than just field references.
-      return;
+    public static final CsvProjectTableScanRule INSTANCE =
+            new CsvProjectTableScanRule(RelFactories.LOGICAL_BUILDER);
+
+    /**
+     * 创建一条优化规则
+     *
+     * @param relBuilderFactory Builder for relational expressions
+     */
+    public CsvProjectTableScanRule(RelBuilderFactory relBuilderFactory) {
+        super(operand(LogicalProject.class, operand(CsvTableScan.class, none())),
+                relBuilderFactory, "CsvProjectTableScanRule");
     }
-    call.transformTo(
-        new CsvTableScan(
-            scan.getCluster(),
-            scan.getTable(),
-            scan.csvTable,
-            fields));
-  }
 
-  private int[] getProjectFields(List<RexNode> exps) {
-    final int[] fields = new int[exps.size()];
-    for (int i = 0; i < exps.size(); i++) {
-      final RexNode exp = exps.get(i);
-      if (exp instanceof RexInputRef) {
-        fields[i] = ((RexInputRef) exp).getIndex();
-      } else {
-        return null; // not a simple projection
-      }
+    @Override
+    public void onMatch(RelOptRuleCall call) {
+        if (logger.isDebugEnabled()) {
+            logger.info("实施规则 {}", String.join("=>", Arrays.stream(call.rels).map(RelNode::toString).collect(Collectors.toList())));
+        }
+        final LogicalProject project = call.rel(0);
+        final CsvTableScan scan = call.rel(1);
+        int[] fields = getProjectFields(project.getProjects());
+        if (fields == null) {
+            // Project contains expressions more complex than just field references.
+            return;
+        }
+        call.transformTo(
+                new CsvTableScan(
+                        scan.getCluster(),
+                        scan.getTable(),
+                        scan.csvTable,
+                        fields));
     }
-    return fields;
-  }
+
+    private int[] getProjectFields(List<RexNode> exps) {
+        final int[] fields = new int[exps.size()];
+        for (int i = 0; i < exps.size(); i++) {
+            final RexNode exp = exps.get(i);
+            if (exp instanceof RexInputRef) {
+                fields[i] = ((RexInputRef) exp).getIndex();
+            } else {
+                return null; // not a simple projection
+            }
+        }
+        return fields;
+    }
 }
 
 // End CsvProjectTableScanRule.java

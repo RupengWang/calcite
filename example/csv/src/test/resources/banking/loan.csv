@@ -1,0 +1,7 @@
+loan-number:int, branch-name:string, amount:double
+001,Shanghai_ZhangJiang,120.20
+002,Shanghai_ZhangJiang,120.20
+003,Shanghai_ZhangJiang,120.20
+004,Shanghai_LuJiaZui,120.20
+005,Shanghai_LuJiaZui,120.20
+006,Shanghai_XuHui,120.20

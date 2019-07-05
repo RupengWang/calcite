@@ -188,10 +188,10 @@ public abstract class Prepare {
     final Program program = getProgram();
     final RelNode rootRel4 = program.run(
         planner, root.rel, desiredTraits, materializationList, latticeList);
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Plan after physical tweaks: {}",
-          RelOptUtil.toString(rootRel4, SqlExplainLevel.ALL_ATTRIBUTES));
-    }
+//    if (LOGGER.isDebugEnabled()) {
+//      LOGGER.debug("Plan after physical tweaks: {}",
+//          RelOptUtil.dumpPlan("", rootRel4, SqlExplainFormat.TEXT, SqlExplainLevel.NON_COST_ATTRIBUTES));
+//    }
 
     return root.withRel(rootRel4);
   }
@@ -260,7 +260,7 @@ public abstract class Prepare {
       sqlToRelConverter.setDynamicParamCountInExplain(
           sqlExplain.getDynamicParamCount());
     }
-
+    LOGGER.info("开始创建 Relation Expression");
     RelRoot root =
         sqlToRelConverter.convertQuery(sqlQuery, needsValidation, true);
     Hook.CONVERTED.run(root.rel);
@@ -316,8 +316,10 @@ public abstract class Prepare {
             sqlExplain.getFormat(), sqlExplain.getDetailLevel());
       }
     }
-
+    LOGGER.info("开始优化");
     root = optimize(root, getMaterializations(), getLattices());
+    String afterOpt = RelOptUtil.dumpPlan("优化完成~", root.rel ,SqlExplainFormat.TEXT, SqlExplainLevel.DIGEST_ATTRIBUTES);
+    LOGGER.info(afterOpt);
 
     if (timingTracer != null) {
       timingTracer.traceTime("end optimization");
@@ -329,6 +331,7 @@ public abstract class Prepare {
     if (!root.kind.belongsTo(SqlKind.DML)) {
       root = root.withKind(sqlNodeOriginal.getKind());
     }
+    LOGGER.info("开始执行物理计划");
     return implement(root);
   }
 

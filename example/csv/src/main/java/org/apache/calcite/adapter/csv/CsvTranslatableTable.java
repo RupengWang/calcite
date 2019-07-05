@@ -39,51 +39,62 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Table based on a CSV file.
  */
 public class CsvTranslatableTable extends CsvTable
-    implements QueryableTable, TranslatableTable {
-  /** Creates a CsvTable. */
-  CsvTranslatableTable(Source source, RelProtoDataType protoRowType) {
-    super(source, protoRowType);
-  }
+        implements QueryableTable, TranslatableTable {
+    /**
+     * Creates a CsvTable.
+     */
+    CsvTranslatableTable(Source source, RelProtoDataType protoRowType) {
+        super(source, protoRowType);
+    }
 
-  public String toString() {
-    return "CsvTranslatableTable";
-  }
+    public String toString() {
+        return "CsvTranslatableTable";
+    }
 
-  /** Returns an enumerable over a given projection of the fields.
-   *
-   * <p>Called from generated code. */
-  public Enumerable<Object> project(final DataContext root,
-      final int[] fields) {
-    final AtomicBoolean cancelFlag = DataContext.Variable.CANCEL_FLAG.get(root);
-    return new AbstractEnumerable<Object>() {
-      public Enumerator<Object> enumerator() {
-        return new CsvEnumerator<>(source, cancelFlag, fieldTypes, fields);
-      }
-    };
-  }
+    /**
+     * Returns an enumerable over a given projection of the fields.
+     *
+     * 通过反射调用
+     */
+    public Enumerable<Object> project(final DataContext root,
+                                      final int[] fields) {
+        final AtomicBoolean cancelFlag = DataContext.Variable.CANCEL_FLAG.get(root);
 
-  public Expression getExpression(SchemaPlus schema, String tableName,
-      Class clazz) {
-    return Schemas.tableExpression(schema, getElementType(), tableName, clazz);
-  }
+        return new AbstractEnumerable<Object>() {
+            public Enumerator<Object> enumerator() {
+                return new CsvEnumerator<>(source, cancelFlag, fieldTypes, fields);
+            }
+        };
+    }
 
-  public Type getElementType() {
-    return Object[].class;
-  }
+    public Expression getExpression(SchemaPlus schema, String tableName,
+                                    Class clazz) {
+        return Schemas.tableExpression(schema, getElementType(), tableName, clazz);
+    }
 
-  public <T> Queryable<T> asQueryable(QueryProvider queryProvider,
-      SchemaPlus schema, String tableName) {
-    throw new UnsupportedOperationException();
-  }
+    public Type getElementType() {
+        return Object[].class;
+    }
 
-  public RelNode toRel(
-      RelOptTable.ToRelContext context,
-      RelOptTable relOptTable) {
-    // Request all fields.
-    final int fieldCount = relOptTable.getRowType().getFieldCount();
-    final int[] fields = CsvEnumerator.identityList(fieldCount);
-    return new CsvTableScan(context.getCluster(), relOptTable, this, fields);
-  }
+    public <T> Queryable<T> asQueryable(QueryProvider queryProvider,
+                                        SchemaPlus schema, String tableName) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * TranslatableTable#toRel 可以将 一个Table转化为一个可以执行的Relation Expression
+     * @param context
+     * @param relOptTable 元数据
+     * @return
+     */
+    public RelNode toRel(
+            RelOptTable.ToRelContext context,
+            RelOptTable relOptTable) {
+        // Request all fields.
+        final int fieldCount = relOptTable.getRowType().getFieldCount();
+        final int[] fields = CsvEnumerator.identityList(fieldCount);
+        return new CsvTableScan(context.getCluster(), relOptTable, this, fields);
+    }
 }
 
 // End CsvTranslatableTable.java

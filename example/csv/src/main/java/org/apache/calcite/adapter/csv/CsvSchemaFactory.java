@@ -20,6 +20,8 @@ import org.apache.calcite.model.ModelHandler;
 import org.apache.calcite.schema.Schema;
 import org.apache.calcite.schema.SchemaFactory;
 import org.apache.calcite.schema.SchemaPlus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Locale;
@@ -31,36 +33,49 @@ import java.util.Map;
  * <p>Allows a custom schema to be included in a <code><i>model</i>.json</code>
  * file.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class CsvSchemaFactory implements SchemaFactory {
-  /** Name of the column that is implicitly created in a CSV stream table
-   * to hold the data arrival time. */
-  static final String ROWTIME_COLUMN_NAME = "ROWTIME";
 
-  /** Public singleton, per factory contract. */
-  public static final CsvSchemaFactory INSTANCE = new CsvSchemaFactory();
+    private static final Logger logger = LoggerFactory.getLogger(CsvSchemaFactory.class);
 
-  private CsvSchemaFactory() {
-  }
+    /**
+     * Name of the column that is implicitly created in a CSV stream table
+     * to hold the data arrival time.
+     */
+    static final String ROWTIME_COLUMN_NAME = "ROWTIME";
 
-  public Schema create(SchemaPlus parentSchema, String name,
-      Map<String, Object> operand) {
-    final String directory = (String) operand.get("directory");
-    final File base =
-        (File) operand.get(ModelHandler.ExtraOperand.BASE_DIRECTORY.camelName);
-    File directoryFile = new File(directory);
-    if (base != null && !directoryFile.isAbsolute()) {
-      directoryFile = new File(base, directory);
+    /**
+     * Public singleton, per factory contract.
+     */
+    public static final CsvSchemaFactory INSTANCE = new CsvSchemaFactory();
+
+    private CsvSchemaFactory() {
     }
-    String flavorName = (String) operand.get("flavor");
-    CsvTable.Flavor flavor;
-    if (flavorName == null) {
-      flavor = CsvTable.Flavor.SCANNABLE;
-    } else {
-      flavor = CsvTable.Flavor.valueOf(flavorName.toUpperCase(Locale.ROOT));
+
+    /**
+     * @param parentSchema Parent schema
+     * @param name         Name of this schema
+     * @param operand      从model定义Json取出key是operand的一个Map
+     */
+    public Schema create(SchemaPlus parentSchema, String name,
+                         Map<String, Object> operand) {
+        logger.info("创建Schema [{}] 使用配置 [{}]", name, operand);
+        final String directory = (String) operand.get("directory");
+        final File base =
+                (File) operand.get(ModelHandler.ExtraOperand.BASE_DIRECTORY.camelName);
+        File directoryFile = new File(directory);
+        if (base != null && !directoryFile.isAbsolute()) {
+            directoryFile = new File(base, directory);
+        }
+        logger.info("Schema [{}] 的数据文件路径 {}", name, directoryFile);
+        String flavorName = (String) operand.get("flavor");
+        CsvTable.Flavor flavor;
+        if (flavorName == null) {
+            flavor = CsvTable.Flavor.SCANNABLE;
+        } else {
+            flavor = CsvTable.Flavor.valueOf(flavorName.toUpperCase(Locale.ROOT));
+        }
+        return new CsvSchema(directoryFile, flavor);
     }
-    return new CsvSchema(directoryFile, flavor);
-  }
 }
 
 // End CsvSchemaFactory.java

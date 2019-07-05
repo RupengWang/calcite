@@ -33,26 +33,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * data by calling the {@link #scan(DataContext)} method.
  */
 public class CsvScannableTable extends CsvTable
-    implements ScannableTable {
-  /** Creates a CsvScannableTable. */
-  CsvScannableTable(Source source, RelProtoDataType protoRowType) {
-    super(source, protoRowType);
-  }
+        implements ScannableTable {
+    /**
+     * Creates a CsvScannableTable.
+     */
+    protected CsvScannableTable(Source source, RelProtoDataType protoRowType) {
+        super(source, protoRowType);
+    }
 
-  public String toString() {
-    return "CsvScannableTable";
-  }
+    public String toString() {
+        return "CsvScannableTable";
+    }
 
-  public Enumerable<Object[]> scan(DataContext root) {
-    final int[] fields = CsvEnumerator.identityList(fieldTypes.size());
-    final AtomicBoolean cancelFlag = DataContext.Variable.CANCEL_FLAG.get(root);
-    return new AbstractEnumerable<Object[]>() {
-      public Enumerator<Object[]> enumerator() {
-        return new CsvEnumerator<>(source, cancelFlag, false, null,
-            new CsvEnumerator.ArrayRowConverter(fieldTypes, fields));
-      }
-    };
-  }
+    public Enumerable<Object[]> scan(DataContext root) {
+        final int[] fields = CsvEnumerator.identityList(fieldTypes.size());
+        final AtomicBoolean cancelFlag = DataContext.Variable.CANCEL_FLAG.get(root);
+        return new AbstractEnumerable<Object[]>() {
+            public Enumerator<Object[]> enumerator() {
+                return new CsvEnumerator<>(source, cancelFlag, false, null,
+                        new CsvEnumerator.ArrayRowConverter(fieldTypes, fields));
+            }
+        };
+    }
 }
 
 // End CsvScannableTable.java

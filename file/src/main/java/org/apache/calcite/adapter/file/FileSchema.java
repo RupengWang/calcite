@@ -17,7 +17,7 @@
 package org.apache.calcite.adapter.file;
 
 import org.apache.calcite.adapter.csv.CsvFilterableTable;
-import org.apache.calcite.adapter.csv.JsonTable;
+import org.apache.calcite.adapter.json.JsonTable;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.schema.Table;
 import org.apache.calcite.schema.impl.AbstractSchema;

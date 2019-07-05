@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "defaultSchema": "banking",
+  "schemas": [
+    {
+      "name": "banking",
+      "type": "custom",
+      "factory": "org.apache.calcite.adapter.csv.CsvSchemaFactory",
+      "operand": {
+        "directory": "banking",
+        "flavor": "TRANSLATABLE"
+      }
+    }
+  ]
+}
