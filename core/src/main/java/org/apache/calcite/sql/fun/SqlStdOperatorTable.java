@@ -1999,6 +1999,16 @@ public class SqlStdOperatorTable extends ReflectiveSqlOperatorTable {
           SqlFunctionCategory.SYSTEM, false, false) {
       };
 
+  public static final SqlFunction LEFT =
+          new SqlFunction("LEFT", SqlKind.OTHER_FUNCTION,
+                  ReturnTypes.ARG0_NULLABLE_VARYING, null,
+                  OperandTypes.CBSTRING_INTEGER, SqlFunctionCategory.STRING);
+
+  public static final SqlFunction RIGHT =
+          new SqlFunction("RIGHT", SqlKind.OTHER_FUNCTION,
+                  ReturnTypes.ARG0_NULLABLE_VARYING, null,
+                  OperandTypes.CBSTRING_INTEGER, SqlFunctionCategory.STRING);
+
   /**
    * The sequence next value function: <code>NEXT VALUE FOR sequence</code>
    */

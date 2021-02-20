@@ -697,6 +697,8 @@ public class SqlJdbcFunctionCall extends SqlFunction {
       map.put("LCASE", simple(SqlStdOperatorTable.LOWER));
       map.put("LENGTH", simple(SqlStdOperatorTable.CHARACTER_LENGTH));
       map.put("LOCATE", simple(SqlStdOperatorTable.POSITION));
+      map.put("LEFT", simple(SqlStdOperatorTable.LEFT));
+      map.put("RIGHT", simple(SqlStdOperatorTable.RIGHT));
       map.put("LTRIM",
           new SimpleMakeCall(SqlStdOperatorTable.TRIM) {
             @Override public SqlCall createCall(SqlParserPos pos,

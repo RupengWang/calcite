@@ -240,6 +240,55 @@ public class SqlFunctions {
     return newS.toString();
   }
 
+
+  /** SQL LEFT(string, integer) function. */
+  public static String left(String s, int n) {
+    if (n <= 0) {
+      return "";
+    }
+    int len = s.length();
+    if (n >= len) {
+      return s;
+    }
+    return s.substring(0, n);
+  }
+
+  /** SQL LEFT(ByteString, integer) function. */
+  public static ByteString left(ByteString s, int n) {
+    if (n <= 0) {
+      return ByteString.EMPTY;
+    }
+    int len = s.length();
+    if (n >= len) {
+      return s;
+    }
+    return s.substring(0, n);
+  }
+
+  /** SQL RIGHT(string, integer) function. */
+  public static String right(String s, int n) {
+    if (n <= 0) {
+      return "";
+    }
+    int len = s.length();
+    if (n >= len) {
+      return s;
+    }
+    return s.substring(len - n);
+  }
+
+  /** SQL RIGHT(ByteString, integer) function. */
+  public static ByteString right(ByteString s, int n) {
+    if (n <= 0) {
+      return ByteString.EMPTY;
+    }
+    final int len = s.length();
+    if (n >= len) {
+      return s;
+    }
+    return s.substring(len - n);
+  }
+
   /** SQL CHARACTER_LENGTH(string) function. */
   public static int charLength(String s) {
     if (s == null) {

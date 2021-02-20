@@ -1892,6 +1892,19 @@ public abstract class SqlOperatorBaseTest {
 
   }
 
+  @Test
+  public void testFNTest() {
+    tester.setFor(new SqlJdbcFunctionCall("dummy"));
+    tester.checkString("{fn LEFT('abcd', 3)}", "abc", "VARCHAR(4) NOT NULL");
+    tester.checkString("{fn LEFT('abcd', 4)}", "abcd", "VARCHAR(4) NOT NULL");
+    tester.checkString("{fn LEFT('abcd', 5)}", "abcd", "VARCHAR(4) NOT NULL");
+    tester.checkNull("{fn LEFT(cast(null as varchar(1)), 3)}");
+    tester.checkString("{fn RIGHT('abcd', 3)}", "bcd", "VARCHAR(4) NOT NULL");
+    tester.checkString("{fn RIGHT('abcd', 4)}", "abcd", "VARCHAR(4) NOT NULL");
+    tester.checkString("{fn RIGHT('abcd', 5)}", "abcd", "VARCHAR(4) NOT NULL");
+    tester.checkNull("{fn RIGHT(cast(null as varchar(1)), 3)}");
+  }
+
   @Test public void testSelect() {
     tester.check(
         "select * from (values(1))",

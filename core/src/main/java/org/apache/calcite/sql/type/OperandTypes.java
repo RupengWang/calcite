@@ -429,6 +429,14 @@ public abstract class OperandTypes {
       family(SqlTypeFamily.STRING, SqlTypeFamily.STRING,
           SqlTypeFamily.INTEGER, SqlTypeFamily.INTEGER);
 
+
+  /** Operand type-checking strategy where the first operand is a character or
+   * binary string (CHAR, VARCHAR, BINARY or VARBINARY), and the second operand
+   * is INTEGER. */
+  public static final SqlSingleOperandTypeChecker CBSTRING_INTEGER =
+          or(family(SqlTypeFamily.STRING, SqlTypeFamily.INTEGER),
+                  family(SqlTypeFamily.BINARY, SqlTypeFamily.INTEGER));
+
   /**
    * Operand type-checking strategy where two operands must both be in the
    * same string type family and last type is INTEGER.
